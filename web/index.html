@@ -3,10 +3,21 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
   <title>Schedule</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Schedule</h1>
-  <p>Frontend coming soon. The API is live — try <code>/api/day?date=2026-08-09</code>.</p>
+  <header>
+    <button id="prev" aria-label="Previous day">&lsaquo;</button>
+    <div class="date-wrap">
+      <span id="dateLabel"></span>
+      <button id="today">Today</button>
+    </div>
+    <button id="next" aria-label="Next day">&rsaquo;</button>
+  </header>
+  <div id="status" hidden>Reconnecting&hellip;</div>
+  <main id="board"></main>
+  <script src="app.js"></script>
 </body>
 </html>

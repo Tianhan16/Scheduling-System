@@ -3,10 +3,58 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
   <title>Schedule — admin</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Schedule — admin</h1>
-  <p>Admin frontend coming soon.</p>
+  <header>
+    <button id="prev" aria-label="Previous day">&lsaquo;</button>
+    <div class="date-wrap">
+      <span id="dateLabel"></span>
+      <button id="today">Today</button>
+      <span class="badge">admin</span>
+    </div>
+    <button id="next" aria-label="Next day">&rsaquo;</button>
+  </header>
+  <div id="status" hidden>Reconnecting&hellip;</div>
+  <main id="board"></main>
+
+  <dialog id="addDialog">
+    <form id="addForm">
+      <h2>New appointment</h2>
+      <label>Therapist
+        <select id="fTherapist"></select>
+      </label>
+      <label>Service
+        <select id="fService"></select>
+      </label>
+      <div class="form-row">
+        <label>Start
+          <input type="time" id="fStart" step="900" required>
+        </label>
+        <label>Minutes
+          <input type="number" id="fDuration" min="15" max="480" step="15" required>
+        </label>
+      </div>
+      <label>Customer name
+        <input type="text" id="fName" required autocomplete="off">
+      </label>
+      <label>Phone
+        <input type="tel" id="fPhone" autocomplete="off">
+      </label>
+      <label>Notes
+        <input type="text" id="fNotes" autocomplete="off">
+      </label>
+      <p id="fError" class="error" hidden></p>
+      <div class="actions">
+        <button type="button" id="fCancel">Close</button>
+        <button type="submit" class="primary">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>window.IS_ADMIN = true;</script>
+  <script src="app.js"></script>
 </body>
 </html>
