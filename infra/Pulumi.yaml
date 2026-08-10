@@ -1,0 +1,3 @@
+name: scheduling-system
+runtime: nodejs
+description: Family massage parlor scheduling system — S3+CloudFront, API Gateway+Lambda, DynamoDB
