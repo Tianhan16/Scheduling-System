@@ -160,10 +160,10 @@ function openAddDialog(therapistId, startMin) {
   const fT = $("fTherapist");
   const fS = $("fService");
   fT.replaceChildren(...dayData.therapists.map((t) => new Option(t.name, t.id)));
-  fS.replaceChildren(...dayData.services.map((s) => new Option(`${s.name} (${s.durationMin}m)`, s.id)));
+  fS.replaceChildren(...dayData.services.map((s) => new Option(s.name, s.id)));
   fT.value = therapistId;
   $("fStart").value = toHHMM(startMin);
-  $("fDuration").value = dayData.services[0].durationMin;
+  $("fDuration").value = 60; // default booking length; admin adjusts per call
   $("fName").value = "";
   $("fPhone").value = "";
   $("fNotes").value = "";
@@ -173,11 +173,6 @@ function openAddDialog(therapistId, startMin) {
 
 if (IS_ADMIN) {
   document.body.classList.add("admin");
-
-  $("fService").addEventListener("change", () => {
-    const svc = dayData.services.find((s) => s.id === $("fService").value);
-    if (svc) $("fDuration").value = svc.durationMin;
-  });
 
   $("fCancel").addEventListener("click", () => $("addDialog").close());
 

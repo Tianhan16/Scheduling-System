@@ -18,19 +18,23 @@ const table = new aws.dynamodb.Table("appointments", {
   ],
 });
 
-// Seed data: therapists + service menu. PLACEHOLDERS — edit these to the real
-// store values, then run `pulumi up` to apply.
+// Seed data: therapists + service menu (Zen Reflexology).
+// durationMin is only the default prefill — admin sets real length per booking.
 const seedConfig = {
   therapists: [
-    { id: "t-anna", name: "Anna" },
-    { id: "t-mei", name: "Mei" },
-    { id: "t-ken", name: "Ken" },
+    { id: "t-summer", name: "Summer" },
+    { id: "t-cindy", name: "Cindy" },
+    { id: "t-mona", name: "Mona" },
+    { id: "t-helen", name: "Helen" },
+    { id: "t-sub1", name: "Sub 1" },
+    { id: "t-sub2", name: "Sub 2" },
   ],
   services: [
-    { id: "s-deep", name: "Deep tissue", durationMin: 60, color: "teal" },
+    { id: "s-lomi", name: "Lomi Lomi", durationMin: 60, color: "pink" },
+    { id: "s-deep", name: "Deep Tissue", durationMin: 60, color: "teal" },
     { id: "s-swedish", name: "Swedish", durationMin: 60, color: "purple" },
-    { id: "s-foot", name: "Foot", durationMin: 30, color: "coral" },
     { id: "s-combo", name: "Combo", durationMin: 60, color: "amber" },
+    { id: "s-foot", name: "Foot Massage", durationMin: 60, color: "coral" },
   ],
 };
 
@@ -169,7 +173,6 @@ const oac = new aws.cloudfront.OriginAccessControl("web-oac", {
 const apiHost = api.apiEndpoint.apply((u) => new URL(u).host);
 
 // AWS-managed cache/request policies (fixed well-known IDs).
-const CACHING_OPTIMIZED = "658327ea-f89d-4fab-a63d-7e88639e58f6";
 const CACHING_DISABLED = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad";
 const ALL_VIEWER_EXCEPT_HOST = "b689b0a8-53d0-40ab-baf2-68738e2966ac";
 
@@ -194,12 +197,14 @@ const cdn = new aws.cloudfront.Distribution("cdn", {
       },
     },
   ],
+  // Static files are NOT edge-cached: at this traffic level caching buys
+  // nothing, and it made deploys take up to 24h to reach phones.
   defaultCacheBehavior: {
     targetOriginId: "s3",
     viewerProtocolPolicy: "redirect-to-https",
     allowedMethods: ["GET", "HEAD"],
     cachedMethods: ["GET", "HEAD"],
-    cachePolicyId: CACHING_OPTIMIZED,
+    cachePolicyId: CACHING_DISABLED,
     compress: true,
   },
   orderedCacheBehaviors: [
@@ -262,5 +267,6 @@ for (const file of fs.readdirSync(webDir)) {
 // ---------------------------------------------------------------------------
 
 export const url = pulumi.interpolate`https://${cdn.domainName}`;
+export const distributionId = cdn.id;
 export const adminUrl = pulumi.interpolate`https://${cdn.domainName}/admin.html`;
 export const apiEndpoint = api.apiEndpoint;

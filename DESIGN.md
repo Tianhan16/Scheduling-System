@@ -158,8 +158,17 @@ menu actually changes.
 - Authentication (add a PIN on `/api/admin/*` when wanted)
 - Week view, therapist working hours, menu editing, customer history views
 
-## Open items (seed data, needed before first render)
+## Open items
 
-- Real therapist names
-- Service menu: names, default durations, colors
-- Store hours (grid start/end) and slot granularity (15 or 30 min)
+- ~~Real therapist names~~ — Summer, Cindy, Mona, Helen, Sub 1, Sub 2
+- ~~Service menu~~ — Lomi Lomi, Deep Tissue, Swedish, Combo, Foot Massage
+  (durations set manually per booking; add-ons like hot stone go in notes)
+- Store hours: grid currently shows 10:00–20:00 (`OPEN_MIN`/`CLOSE_MIN` in
+  web/app.js) — confirm against the real store schedule
+
+## Deployed (2026-08-10)
+
+- Staff: https://private-url-removed.example
+- Admin: https://private-url-removed.example/admin.html
+- Static files are served uncached (instant deploys); only `/api/*` was ever
+  dynamic. Local frontend dev: `node dev-server.mjs` → localhost:4173.
