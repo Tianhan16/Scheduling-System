@@ -4,10 +4,11 @@
 const IS_ADMIN = !!window.IS_ADMIN;
 const API_BASE = IS_ADMIN ? "/api/admin" : "/api";
 
-// Store hours shown on the grid. PLACEHOLDER — set to the real store hours.
-const OPEN_MIN = 10 * 60;   // 10:00
-const CLOSE_MIN = 20 * 60;  // 20:00
-const PX_PER_MIN = 1;       // 60px per hour
+// Store hours shown on the grid.
+const OPEN_MIN = 9 * 60;    // 9:00 am
+const CLOSE_MIN = 22 * 60;  // 10:00 pm
+const PX_PER_MIN = 0.8;     // 48px per hour — keep in sync with the 48px
+                            // hour-line gradient in styles.css (.col)
 const SLOT_MIN = 15;        // tap-to-add rounds to this granularity
 const POLL_MS = 5000;
 
