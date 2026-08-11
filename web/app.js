@@ -130,11 +130,11 @@ function apptBlock(a, services) {
 
   const l1 = document.createElement("div");
   l1.className = "l1";
-  l1.textContent = `${svc?.name ?? "Service"} · ${a.durationMin}m`;
+  l1.textContent = svc?.name ?? "Service";
   div.appendChild(l1);
 
   const l2 = document.createElement("div");
-  l2.textContent = a.customerName;
+  l2.textContent = `${a.durationMin}m · ${a.customerName}`;
   div.appendChild(l2);
 
   const phoneText = IS_ADMIN ? a.phone : a.phoneLast4 && `••• ${a.phoneLast4}`;
