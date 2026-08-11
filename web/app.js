@@ -57,6 +57,7 @@ function render() {
   $("dateLabel").textContent = new Date(`${data.date}T12:00:00`).toLocaleDateString(undefined, {
     weekday: "short", month: "short", day: "numeric",
   });
+  $("datePick").value = data.date;
 
   const services = new Map(data.services.map((s) => [s.id, s]));
   const colHeight = (CLOSE_MIN - OPEN_MIN) * PX_PER_MIN;
@@ -144,16 +145,49 @@ function apptBlock(a, services) {
     div.appendChild(line);
   }
 
-  if (IS_ADMIN) {
-    div.addEventListener("click", async () => {
-      const who = a.customerName ? ` for ${a.customerName}` : "";
-      const ok = confirm(`Cancel ${svc?.name ?? "appointment"}${who} at ${a.start}?`);
-      if (!ok) return;
-      await fetch(`${API_BASE}/appointments/${currentDate}/${a.id}`, { method: "DELETE" });
-      refresh();
-    });
-  }
+  div.addEventListener("click", (e) => {
+    e.stopPropagation();
+    openDetail(a, svc);
+  });
   return div;
+}
+
+// ---- Appointment detail popup (both views; cancel button is admin-only) ----
+
+let detailAppt = null;
+
+function openDetail(a, svc) {
+  detailAppt = a;
+  const end = toHHMM(toMinutes(a.start) + a.durationMin);
+  const phoneText = IS_ADMIN ? a.phone : a.phoneLast4 && `••• ${a.phoneLast4}`;
+
+  const rows = [
+    ["Time", `${a.start} – ${end} (${a.durationMin}m)`],
+    ["Phone", phoneText || "—"],
+  ];
+  if (a.customerName) rows.push(["Customer", a.customerName]);
+  if (a.notes) rows.push(["Notes", a.notes]);
+
+  const body = $("detailBody");
+  body.replaceChildren();
+  const title = document.createElement("h2");
+  const chip = document.createElement("span");
+  chip.className = `chip b-${svc?.color ?? "gray"}`;
+  title.append(chip, document.createTextNode(svc?.name ?? "Service"));
+  body.appendChild(title);
+  for (const [key, value] of rows) {
+    const row = document.createElement("div");
+    row.className = "drow";
+    const k = document.createElement("span");
+    k.className = "dkey";
+    k.textContent = key;
+    const v = document.createElement("span");
+    v.className = "dval";
+    v.textContent = value;
+    row.append(k, v);
+    body.appendChild(row);
+  }
+  $("detailDialog").showModal();
 }
 
 // ---- Admin: add-appointment dialog -----------------------------------------
@@ -175,6 +209,14 @@ function openAddDialog(therapistId, startMin) {
 
 if (IS_ADMIN) {
   document.body.classList.add("admin");
+
+  $("dCancel").addEventListener("click", async () => {
+    if (!detailAppt) return;
+    if (!confirm("Cancel this appointment?")) return;
+    await fetch(`${API_BASE}/appointments/${currentDate}/${detailAppt.id}`, { method: "DELETE" });
+    $("detailDialog").close();
+    refresh();
+  });
 
   $("fCancel").addEventListener("click", () => $("addDialog").close());
 
@@ -208,9 +250,16 @@ if (IS_ADMIN) {
 
 // ---- Wiring ----------------------------------------------------------------
 
+$("dClose").addEventListener("click", () => $("detailDialog").close());
 $("prev").addEventListener("click", () => shiftDate(-1));
 $("next").addEventListener("click", () => shiftDate(1));
 $("today").addEventListener("click", () => { currentDate = todayISO(); refresh(); });
+$("datePick").addEventListener("change", () => {
+  if ($("datePick").value) {
+    currentDate = $("datePick").value;
+    refresh();
+  }
+});
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden) refresh();
 });

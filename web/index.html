@@ -9,15 +9,29 @@
 </head>
 <body>
   <header>
+    <div class="brand">Zen Reflexology</div>
+    <div class="nav-row">
     <button id="prev" aria-label="Previous day">&lsaquo;</button>
     <div class="date-wrap">
-      <span id="dateLabel"></span>
+      <span class="date-tap">
+        <span id="dateLabel"></span>
+        <input type="date" id="datePick" aria-label="Pick a date">
+      </span>
       <button id="today">Today</button>
     </div>
     <button id="next" aria-label="Next day">&rsaquo;</button>
+    </div>
   </header>
   <div id="status" hidden>Reconnecting&hellip;</div>
   <main id="board"></main>
+
+  <dialog id="detailDialog">
+    <div id="detailBody"></div>
+    <div class="actions">
+      <button type="button" id="dClose">Close</button>
+    </div>
+  </dialog>
+
   <script src="app.js"></script>
 </body>
 </html>
