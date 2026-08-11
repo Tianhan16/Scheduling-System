@@ -92,10 +92,11 @@ async function getDay(date, { masked }) {
 async function createAppointment(body) {
   const { date, therapistId, serviceId, start } = body;
   const customerName = body.customerName?.trim();
+  const phone = body.phone?.trim();
 
   if (!date || !DATE_RE.test(date)) return json(400, { message: "date must be YYYY-MM-DD" });
   if (!start || !TIME_RE.test(start)) return json(400, { message: "start must be HH:MM (24-hour)" });
-  if (!customerName) return json(400, { message: "customerName is required" });
+  if (!phone) return json(400, { message: "phone is required" });
 
   const config = await getConfig();
   const therapist = config.therapists.find((t) => t.id === therapistId);
@@ -130,8 +131,8 @@ async function createAppointment(body) {
     id: `a-${randomUUID().slice(0, 8)}`,
     therapistId,
     serviceId,
-    customerName,
-    phone: body.phone?.trim() || null,
+    customerName: customerName || null,
+    phone,
     notes: body.notes?.trim() || null,
     start,
     durationMin,

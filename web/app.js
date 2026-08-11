@@ -128,25 +128,26 @@ function apptBlock(a, services) {
   div.style.top = `${(toMinutes(a.start) - OPEN_MIN) * PX_PER_MIN}px`;
   div.style.height = `${a.durationMin * PX_PER_MIN - 2}px`;
 
-  const l1 = document.createElement("div");
-  l1.className = "l1";
-  l1.textContent = svc?.name ?? "Service";
-  div.appendChild(l1);
-
-  const l2 = document.createElement("div");
-  l2.textContent = `${a.durationMin}m · ${a.customerName}`;
-  div.appendChild(l2);
-
+  // Line order: phone (bold), duration + service, then notes and/or name.
+  // Staff payloads have no notes field, so staff blocks never show notes.
   const phoneText = IS_ADMIN ? a.phone : a.phoneLast4 && `••• ${a.phoneLast4}`;
-  if (phoneText) {
-    const l3 = document.createElement("div");
-    l3.textContent = phoneText;
-    div.appendChild(l3);
+  const lines = [
+    { text: phoneText || "no phone", cls: "l1" },
+    { text: `${a.durationMin}m · ${svc?.name ?? "Service"}` },
+  ];
+  if (a.notes) lines.push({ text: a.notes });
+  if (a.customerName) lines.push({ text: a.customerName });
+  for (const { text, cls } of lines) {
+    const line = document.createElement("div");
+    if (cls) line.className = cls;
+    line.textContent = text;
+    div.appendChild(line);
   }
 
   if (IS_ADMIN) {
     div.addEventListener("click", async () => {
-      const ok = confirm(`Cancel ${svc?.name ?? "appointment"} for ${a.customerName} at ${a.start}?`);
+      const who = a.customerName ? ` for ${a.customerName}` : "";
+      const ok = confirm(`Cancel ${svc?.name ?? "appointment"}${who} at ${a.start}?`);
       if (!ok) return;
       await fetch(`${API_BASE}/appointments/${currentDate}/${a.id}`, { method: "DELETE" });
       refresh();

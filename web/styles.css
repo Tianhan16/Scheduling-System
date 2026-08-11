@@ -70,11 +70,13 @@ header button {
 main { overflow-x: auto; }
 .board {
   display: grid;
-  grid-template-columns: 36px repeat(var(--cols), minmax(96px, 1fr));
+  grid-template-columns: 42px repeat(var(--cols), minmax(96px, 1fr));
   /* Make the board's own box as wide as its columns. Without this the box
      stays viewport-width while columns overflow it, and the sticky gutter
      stops sticking once the box's right edge scrolls past. */
   min-width: max-content;
+  /* room for the final hour label, which centers on the grid's last line */
+  padding-bottom: 16px;
 }
 .corner, .gutter {
   position: sticky;
@@ -93,10 +95,11 @@ main { overflow-x: auto; }
 .corner { border-bottom: 1px solid var(--line); }
 .tlab {
   position: absolute;
-  right: 4px;
+  right: 6px;
   transform: translateY(-6px);
-  font-size: 9px;
-  color: var(--muted);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text);
 }
 .col {
   position: relative;
