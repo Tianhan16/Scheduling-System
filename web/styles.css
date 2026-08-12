@@ -39,6 +39,7 @@ header {
   border-bottom: 1px solid var(--line);
 }
 .brand {
+  position: relative;
   text-align: center;
   font-size: 18px;
   font-weight: 700;
@@ -46,6 +47,14 @@ header {
   text-transform: uppercase;
   color: var(--accent);
   margin: 2px 0 5px;
+}
+.brand .badge {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  letter-spacing: normal;
+  text-transform: none;
 }
 .nav-row {
   display: flex;
@@ -63,13 +72,34 @@ header button {
   cursor: pointer;
 }
 .date-wrap { display: flex; align-items: center; gap: 8px; }
-.date-tap { position: relative; display: inline-flex; }
+.date-tap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 8px;
+  background: #f5e6e6;
+  border: 1px solid #8a3033;
+  cursor: pointer;
+}
 #dateLabel {
   font-weight: 600;
   font-size: 14px;
   white-space: nowrap;
-  text-decoration: underline dotted;
-  text-underline-offset: 3px;
+  color: #7a2a2e;
+}
+#today {
+  background: #e1f5ee;
+  border-color: #0f6e56;
+  color: #085041;
+  font-weight: 600;
+}
+#rosterBtn {
+  background: #eeedfe;
+  border-color: #534ab7;
+  color: #3c3489;
+  font-size: 17px;
+  padding: 5px 14px;
 }
 #datePick {
   position: absolute;
@@ -169,6 +199,10 @@ main { overflow-x: auto; }
 .b-green  { background: #eaf3de; border-color: #3b6d11; color: #27500a; }
 .b-gray   { background: #f1efe8; border-color: #5f5e5a; color: #444441; }
 @media (prefers-color-scheme: dark) {
+  .date-tap { background: #4a2626; border-color: #b06060; }
+  #dateLabel { color: #e6baba; }
+  #today { background: #085041; border-color: #5dcaa5; color: #9fe1cb; }
+  #rosterBtn { background: #3c3489; border-color: #afa9ec; color: #cecbf6; }
   .b-teal   { background: #085041; border-color: #5dcaa5; color: #9fe1cb; }
   .b-purple { background: #3c3489; border-color: #afa9ec; color: #cecbf6; }
   .b-coral  { background: #712b13; border-color: #f0997b; color: #f5c4b3; }
