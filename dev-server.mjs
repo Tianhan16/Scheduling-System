@@ -7,7 +7,14 @@ import { fileURLToPath } from "node:url";
 
 const WEB = path.join(path.dirname(fileURLToPath(import.meta.url)), "web");
 const API = "https://private-url-removed.example";
-const TYPES = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript" };
+const TYPES = {
+  ".html": "text/html",
+  ".css": "text/css",
+  ".js": "text/javascript",
+  ".svg": "image/svg+xml",
+  ".png": "image/png",
+  ".webmanifest": "application/manifest+json",
+};
 
 http
   .createServer(async (req, res) => {

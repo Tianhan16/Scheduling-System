@@ -256,6 +256,7 @@ const contentTypes: Record<string, string> = {
   ".svg": "image/svg+xml",
   ".png": "image/png",
   ".ico": "image/x-icon",
+  ".webmanifest": "application/manifest+json",
 };
 for (const file of fs.readdirSync(webDir)) {
   const full = path.join(webDir, file);

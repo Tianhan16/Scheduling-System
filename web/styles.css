@@ -48,13 +48,10 @@ header {
   color: var(--accent);
   margin: 2px 0 5px;
 }
-.brand .badge {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  letter-spacing: normal;
-  text-transform: none;
+.brand .admin-seal {
+  vertical-align: -3px;
+  margin-left: 7px;
+  color: var(--accent);
 }
 .nav-row {
   display: flex;
@@ -67,7 +64,7 @@ header button {
   background: var(--surface);
   color: var(--text);
   border-radius: 8px;
-  padding: 4px 10px;
+  padding: 0 9px;
   font-size: 14px;
   cursor: pointer;
 }
@@ -76,7 +73,7 @@ header button {
   position: relative;
   display: inline-flex;
   align-items: center;
-  padding: 4px 12px;
+  padding: 0 10px;
   border-radius: 8px;
   background: #f5e6e6;
   border: 1px solid #8a3033;
@@ -99,7 +96,7 @@ header button {
   border-color: #534ab7;
   color: #3c3489;
   font-size: 17px;
-  padding: 5px 14px;
+  padding: 0 10px;
 }
 #datePick {
   position: absolute;
@@ -111,13 +108,10 @@ header button {
   padding: 0;
   min-width: 0;
 }
-.badge {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 99px;
-  background: var(--accent);
-  color: #fff;
+.nav-row button, .date-tap {
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
 }
 
 #status {
