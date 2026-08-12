@@ -33,6 +33,15 @@ const hourLabel = (min) => {
   return `${h % 12 || 12} ${h < 12 ? "AM" : "PM"}`;
 };
 
+// "4808609888" -> "480-860-9888"; unrecognized lengths pass through as-is.
+const formatPhone = (p) => {
+  if (!p) return p;
+  const d = String(p).replace(/\D/g, "");
+  if (d.length === 10) return `${d.slice(0, 3)}-${d.slice(3, 6)}-${d.slice(6)}`;
+  if (d.length === 11 && d[0] === "1") return `1-${d.slice(1, 4)}-${d.slice(4, 7)}-${d.slice(7)}`;
+  return p;
+};
+
 const addDays = (iso, days) => {
   const d = new Date(`${iso}T12:00:00`);
   d.setDate(d.getDate() + days);
@@ -135,9 +144,9 @@ function apptBlock(a, services) {
 
   // Line order: phone (bold), duration + service, then notes and/or name.
   // Staff payloads have no notes field, so staff blocks never show notes.
-  const phoneText = IS_ADMIN ? a.phone : a.phoneLast4 && `••• ${a.phoneLast4}`;
+  const phoneText = IS_ADMIN ? formatPhone(a.phone) : a.phoneLast4 && `••• ${a.phoneLast4}`;
   const lines = [
-    { text: phoneText || "no phone", cls: "l1" },
+    { text: phoneText || "walk-in", cls: "l1" },
     { text: `${a.durationMin}m · ${svc?.name ?? "Service"}` },
   ];
   if (a.notes) lines.push({ text: a.notes });
@@ -163,11 +172,11 @@ let detailAppt = null;
 function openDetail(a, svc) {
   detailAppt = a;
   const end = toHHMM(toMinutes(a.start) + a.durationMin);
-  const phoneText = IS_ADMIN ? a.phone : a.phoneLast4 && `••• ${a.phoneLast4}`;
+  const phoneText = IS_ADMIN ? formatPhone(a.phone) : a.phoneLast4 && `••• ${a.phoneLast4}`;
 
   const rows = [
     ["Time", `${a.start} – ${end} (${a.durationMin}m)`],
-    ["Phone", phoneText || "—"],
+    ["Phone", phoneText || "walk-in"],
   ];
   if (a.customerName) rows.push(["Customer", a.customerName]);
   if (a.notes) rows.push(["Notes", a.notes]);
@@ -226,7 +235,7 @@ function openEditDialog(a) {
   $("fStart").value = a.start;
   $("fDuration").value = a.durationMin;
   $("fName").value = a.customerName ?? "";
-  $("fPhone").value = a.phone ?? "";
+  $("fPhone").value = formatPhone(a.phone ?? "");
   $("fNotes").value = a.notes ?? "";
   $("fError").hidden = true;
   $("addDialog").showModal();
@@ -379,6 +388,15 @@ $("datePick").addEventListener("change", () => {
   if ($("datePick").value) {
     currentDate = $("datePick").value;
     refresh();
+  }
+});
+// Desktop browsers only open the calendar from the input's tiny icon;
+// showPicker() opens it from a click anywhere on the date pill.
+$("datePick").addEventListener("click", () => {
+  try {
+    $("datePick").showPicker?.();
+  } catch {
+    /* older browsers: native focus behavior still applies */
   }
 });
 document.addEventListener("visibilitychange", () => {

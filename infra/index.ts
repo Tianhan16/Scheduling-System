@@ -266,6 +266,9 @@ for (const file of fs.readdirSync(webDir)) {
     key: file,
     source: new pulumi.asset.FileAsset(full),
     contentType: contentTypes[path.extname(file)] ?? "application/octet-stream",
+    // Browsers must revalidate on every load (cheap 304 via ETag) — without
+    // this, heuristic caching serves stale JS/CSS after deploys.
+    cacheControl: "no-cache",
     etag: crypto.createHash("md5").update(fs.readFileSync(full)).digest("hex"),
   });
 }

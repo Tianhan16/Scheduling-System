@@ -151,12 +151,19 @@ async function setRoster(date, body) {
 async function validateBooking(date, body, excludeId) {
   const { therapistId, serviceId, start } = body;
   const customerName = body.customerName?.trim();
-  const phone = body.phone?.trim();
+  // Phone rules: numeric input (dashes/spaces/parens allowed) is stored as
+  // pure digits; digit-free text like "walkin" is a store convention and
+  // passes through as typed.
+  const rawPhone = (body.phone ?? "").trim();
+  const phoneDigits = rawPhone.replace(/[\s().-]/g, "");
+  const phone = /^\d+$/.test(phoneDigits) ? phoneDigits : rawPhone;
 
   if (!start || !TIME_RE.test(start)) {
     return { error: json(400, { message: "start must be HH:MM (24-hour)" }) };
   }
-  if (!phone) return { error: json(400, { message: "phone is required" }) };
+  if (/^\d+$/.test(phone) && !/^\d{7,15}$/.test(phone)) {
+    return { error: json(400, { message: "phone must be 7-15 digits (dashes and spaces are fine)" }) };
+  }
 
   const config = await getConfig();
   const therapist = config.therapists.find((t) => t.id === therapistId);
@@ -193,7 +200,7 @@ async function validateBooking(date, body, excludeId) {
       therapistId,
       serviceId,
       customerName: customerName || null,
-      phone,
+      phone: phone || null, // no phone = walk-in; the UI labels it as such
       notes: body.notes?.trim() || null,
       start,
       durationMin,
