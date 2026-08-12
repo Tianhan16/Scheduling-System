@@ -75,19 +75,24 @@ function render() {
   const services = new Map(data.services.map((s) => [s.id, s]));
   const colHeight = (CLOSE_MIN - OPEN_MIN) * PX_PER_MIN;
 
+  // Therapist names render into the sticky header strip, not the board.
+  const namesRow = $("namesRow");
+  namesRow.style.setProperty("--cols", data.therapists.length);
+  const corner = document.createElement("div");
+  corner.className = "corner";
+  namesRow.replaceChildren(
+    corner,
+    ...data.therapists.map((t) => {
+      const name = document.createElement("div");
+      name.className = "name";
+      name.textContent = t.name;
+      return name;
+    })
+  );
+
   const grid = document.createElement("div");
   grid.className = "board";
   grid.style.setProperty("--cols", data.therapists.length);
-
-  const corner = document.createElement("div");
-  corner.className = "corner";
-  grid.appendChild(corner);
-  for (const t of data.therapists) {
-    const name = document.createElement("div");
-    name.className = "name";
-    name.textContent = t.name;
-    grid.appendChild(name);
-  }
 
   const gutter = document.createElement("div");
   gutter.className = "gutter";
@@ -133,6 +138,7 @@ function render() {
   const scrollLeft = main.scrollLeft;
   main.replaceChildren(grid);
   main.scrollLeft = scrollLeft;
+  $("namesScroll").scrollLeft = main.scrollLeft;
 }
 
 function apptBlock(a, services) {
@@ -380,6 +386,9 @@ if (IS_ADMIN) {
 
 // ---- Wiring ----------------------------------------------------------------
 
+$("board").addEventListener("scroll", () => {
+  $("namesScroll").scrollLeft = $("board").scrollLeft;
+});
 $("dClose").addEventListener("click", () => $("detailDialog").close());
 $("prev").addEventListener("click", () => shiftDate(-1));
 $("next").addEventListener("click", () => shiftDate(1));

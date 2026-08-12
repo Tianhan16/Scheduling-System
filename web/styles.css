@@ -31,7 +31,6 @@ body {
 }
 
 header {
-  padding: 5px 10px 6px;
   position: sticky;
   top: 0;
   z-index: 10;
@@ -46,7 +45,7 @@ header {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--accent);
-  margin: 2px 0 5px;
+  margin: 7px 10px 4px;
 }
 .brand .admin-seal {
   vertical-align: -3px;
@@ -58,6 +57,16 @@ header {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+  padding: 0 10px 8px;
+}
+
+/* Therapist names live inside the sticky header so they survive vertical
+   scrolling; JS keeps this strip's scrollLeft synced with the board. */
+#namesScroll { overflow-x: hidden; }
+#namesRow {
+  display: grid;
+  grid-template-columns: 46px repeat(var(--cols), minmax(110px, 1fr));
+  min-width: max-content;
 }
 header button {
   border: 1px solid var(--line-strong);
@@ -130,7 +139,9 @@ main { overflow-x: auto; }
      stays viewport-width while columns overflow it, and the sticky gutter
      stops sticking once the box's right edge scrolls past. */
   min-width: max-content;
-  /* room for the final hour label, which centers on the grid's last line */
+  /* room for the first and last hour labels, which center on their lines
+     and poke past the grid's top/bottom edges */
+  padding-top: 8px;
   padding-bottom: 16px;
 }
 .corner, .gutter {
@@ -144,10 +155,8 @@ main { overflow-x: auto; }
   text-align: center;
   font-weight: 600;
   font-size: 13px;
-  border-bottom: 1px solid var(--line);
   border-left: 1px solid var(--line);
 }
-.corner { border-bottom: 1px solid var(--line); }
 .tlab {
   position: absolute;
   right: 6px;
