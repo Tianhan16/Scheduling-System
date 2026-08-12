@@ -7,8 +7,8 @@ const API_BASE = IS_ADMIN ? "/api/admin" : "/api";
 // Store hours shown on the grid.
 const OPEN_MIN = 9 * 60;    // 9:00 am
 const CLOSE_MIN = 22 * 60;  // 10:00 pm
-const PX_PER_MIN = 0.8;     // 48px per hour — keep in sync with the 48px
-                            // hour-line gradient in styles.css (.col)
+const PX_PER_MIN = 1.6;     // 96px per hour — keep in sync with the 96px/24px
+                            // hour/quarter gradient in styles.css (.col)
 const SLOT_MIN = 15;        // tap-to-add rounds to this granularity
 const POLL_MS = 5000;
 
@@ -33,10 +33,14 @@ const hourLabel = (min) => {
   return `${h % 12 || 12} ${h < 12 ? "AM" : "PM"}`;
 };
 
-function shiftDate(days) {
-  const d = new Date(`${currentDate}T12:00:00`);
+const addDays = (iso, days) => {
+  const d = new Date(`${iso}T12:00:00`);
   d.setDate(d.getDate() + days);
-  currentDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+};
+
+function shiftDate(days) {
+  currentDate = addDays(currentDate, days);
   refresh();
 }
 
@@ -192,12 +196,18 @@ function openDetail(a, svc) {
 
 // ---- Admin: add-appointment dialog -----------------------------------------
 
+let editingId = null; // null = the form creates; an id = the form edits
+
+function fillFormOptions() {
+  $("fTherapist").replaceChildren(...dayData.therapists.map((t) => new Option(t.name, t.id)));
+  $("fService").replaceChildren(...dayData.services.map((s) => new Option(s.name, s.id)));
+}
+
 function openAddDialog(therapistId, startMin) {
-  const fT = $("fTherapist");
-  const fS = $("fService");
-  fT.replaceChildren(...dayData.therapists.map((t) => new Option(t.name, t.id)));
-  fS.replaceChildren(...dayData.services.map((s) => new Option(s.name, s.id)));
-  fT.value = therapistId;
+  editingId = null;
+  fillFormOptions();
+  $("formTitle").textContent = "New appointment";
+  $("fTherapist").value = therapistId;
   $("fStart").value = toHHMM(startMin);
   $("fDuration").value = 60; // default booking length; admin adjusts per call
   $("fName").value = "";
@@ -207,8 +217,114 @@ function openAddDialog(therapistId, startMin) {
   $("addDialog").showModal();
 }
 
+function openEditDialog(a) {
+  editingId = a.id;
+  fillFormOptions();
+  $("formTitle").textContent = "Edit appointment";
+  $("fTherapist").value = a.therapistId;
+  $("fService").value = a.serviceId;
+  $("fStart").value = a.start;
+  $("fDuration").value = a.durationMin;
+  $("fName").value = a.customerName ?? "";
+  $("fPhone").value = a.phone ?? "";
+  $("fNotes").value = a.notes ?? "";
+  $("fError").hidden = true;
+  $("addDialog").showModal();
+}
+
+// ---- Admin: staff roster dialog --------------------------------------------
+
+function rosterRow(selectedId, options) {
+  const row = document.createElement("div");
+  row.className = "rrow";
+  const num = document.createElement("span");
+  num.className = "num";
+  const sel = document.createElement("select");
+  sel.replaceChildren(...options.map((t) => new Option(t.name, t.id)));
+  if (selectedId) sel.value = selectedId;
+  const del = document.createElement("button");
+  del.type = "button";
+  del.textContent = "✕";
+  del.setAttribute("aria-label", "Remove column");
+  del.addEventListener("click", () => {
+    row.remove();
+    renumberRoster();
+  });
+  row.append(num, sel, del);
+  return row;
+}
+
+function renumberRoster() {
+  [...$("rosterRows").children].forEach((r, i) => {
+    r.querySelector(".num").textContent = i + 1;
+  });
+}
+
+function openRosterDialog() {
+  const options = dayData.allTherapists ?? dayData.therapists;
+  $("rosterRows").replaceChildren(...dayData.therapists.map((t) => rosterRow(t.id, options)));
+  renumberRoster();
+  $("rosterHint").textContent = dayData.rosterSet
+    ? "Columns for this day, left to right"
+    : "No roster saved for this day — currently showing all staff";
+  $("rError").hidden = true;
+  $("rosterDialog").showModal();
+}
+
 if (IS_ADMIN) {
   document.body.classList.add("admin");
+
+  $("rosterBtn").addEventListener("click", openRosterDialog);
+  $("rClose").addEventListener("click", () => $("rosterDialog").close());
+
+  $("rAdd").addEventListener("click", () => {
+    const options = dayData.allTherapists ?? dayData.therapists;
+    const used = new Set([...$("rosterRows").querySelectorAll("select")].map((s) => s.value));
+    const firstFree = options.find((t) => !used.has(t.id));
+    $("rosterRows").appendChild(rosterRow(firstFree?.id, options));
+    renumberRoster();
+  });
+
+  $("rYesterday").addEventListener("click", async () => {
+    const res = await fetch(`${API_BASE}/day?date=${addDays(currentDate, -1)}`);
+    if (!res.ok) return;
+    const yesterday = await res.json();
+    const options = dayData.allTherapists ?? dayData.therapists;
+    $("rosterRows").replaceChildren(
+      ...yesterday.therapists
+        .filter((t) => options.some((o) => o.id === t.id))
+        .map((t) => rosterRow(t.id, options))
+    );
+    renumberRoster();
+  });
+
+  $("rSave").addEventListener("click", async () => {
+    const ids = [...$("rosterRows").querySelectorAll("select")].map((s) => s.value);
+    const fail = (msg) => {
+      $("rError").textContent = msg;
+      $("rError").hidden = false;
+    };
+    if (ids.length === 0) return fail("Add at least one column");
+    if (new Set(ids).size !== ids.length) return fail("Each therapist can only appear once");
+    const res = await fetch(`${API_BASE}/roster/${currentDate}`, {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ therapistIds: ids }),
+    });
+    if (res.ok) {
+      $("rosterDialog").close();
+      refresh();
+    } else {
+      const err = await res.json().catch(() => ({}));
+      fail(err.message ?? `Error ${res.status}`);
+    }
+  });
+
+  $("dEdit").addEventListener("click", () => {
+    if (!detailAppt) return;
+    $("detailDialog").close();
+    openEditDialog(detailAppt);
+  });
 
   $("dCancel").addEventListener("click", async () => {
     if (!detailAppt) return;
@@ -232,11 +348,16 @@ if (IS_ADMIN) {
       phone: $("fPhone").value || undefined,
       notes: $("fNotes").value || undefined,
     };
-    const res = await fetch(`${API_BASE}/appointments`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(body),
-    });
+    const res = await fetch(
+      editingId
+        ? `${API_BASE}/appointments/${currentDate}/${editingId}`
+        : `${API_BASE}/appointments`,
+      {
+        method: editingId ? "PUT" : "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(body),
+      }
+    );
     if (res.ok) {
       $("addDialog").close();
       refresh();

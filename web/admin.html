@@ -18,6 +18,7 @@
         <input type="date" id="datePick" aria-label="Pick a date">
       </span>
       <button id="today">Today</button>
+      <button id="rosterBtn" aria-label="Edit today's staff">&#9998;</button>
       <span class="badge">admin</span>
     </div>
     <button id="next" aria-label="Next day">&rsaquo;</button>
@@ -30,13 +31,14 @@
     <div id="detailBody"></div>
     <div class="actions">
       <button type="button" id="dCancel" class="danger">Cancel appointment</button>
+      <button type="button" id="dEdit">Edit</button>
       <button type="button" id="dClose">Close</button>
     </div>
   </dialog>
 
   <dialog id="addDialog">
     <form id="addForm">
-      <h2>New appointment</h2>
+      <h2 id="formTitle">New appointment</h2>
       <label>Therapist
         <select id="fTherapist"></select>
       </label>
@@ -66,6 +68,21 @@
         <button type="submit" class="primary">Save</button>
       </div>
     </form>
+  </dialog>
+
+  <dialog id="rosterDialog">
+    <h2>Staff today</h2>
+    <p id="rosterHint" class="hint"></p>
+    <div id="rosterRows"></div>
+    <div class="roster-tools">
+      <button type="button" id="rAdd">+ Add column</button>
+      <button type="button" id="rYesterday">Use yesterday's staff</button>
+    </div>
+    <p id="rError" class="error" hidden></p>
+    <div class="actions">
+      <button type="button" id="rClose">Close</button>
+      <button type="button" id="rSave" class="primary">Save</button>
+    </div>
   </dialog>
 
   <script>window.IS_ADMIN = true;</script>

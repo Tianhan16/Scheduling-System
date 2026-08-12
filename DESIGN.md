@@ -72,7 +72,9 @@ There is no authentication in v1 — but the boundary is still enforced
 | `GET /api/day?date=YYYY-MM-DD` | staff | Day schedule, phones masked |
 | `GET /api/admin/day?date=YYYY-MM-DD` | admin | Same, full phone numbers |
 | `POST /api/admin/appointments` | admin | Add an appointment |
+| `PUT /api/admin/appointments/{date}/{id}` | admin | Edit an appointment (same-day fields) |
 | `DELETE /api/admin/appointments/{date}/{id}` | admin | Cancel (soft delete) |
+| `PUT /api/admin/roster/{date}` | admin | Set that day's therapist columns (ordered) |
 
 The day response contains **everything needed to draw the screen** in one call:
 
@@ -140,7 +142,12 @@ single query.
 | Item | PK | SK | Attributes |
 |---|---|---|---|
 | Appointment | `2026-08-08` | `a-7f3k` | therapistId, serviceId, customerName, phone, start, durationMin, notes, status, createdAt |
+| Roster | `2026-08-08` | `ROSTER` | therapistIds[] (ordered = column order), updatedAt |
 | Config | `CONFIG` | `current` | therapists[], services[] |
+
+Day responses resolve columns from the roster item (it rides along in the same
+partition query). No roster saved → all therapists show. A therapist with a
+booking that day always gets a column, even if left off the roster.
 
 Therapists and services are seed data loaded at deploy; no editing UI until the
 menu actually changes.
@@ -154,7 +161,8 @@ menu actually changes.
 
 ## Deliberately not in v1
 
-- Editing/moving an appointment (workaround: cancel + re-add)
+- Moving an appointment to a different date (edit covers same-day changes;
+  cross-day = cancel + re-add, since the date is the partition key)
 - Authentication (add a PIN on `/api/admin/*` when wanted)
 - Week view, therapist working hours, menu editing, customer history views
 

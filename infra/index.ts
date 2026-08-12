@@ -24,8 +24,12 @@ const seedConfig = {
   therapists: [
     { id: "t-summer", name: "Summer" },
     { id: "t-cindy", name: "Cindy" },
-    { id: "t-mona", name: "Mona" },
     { id: "t-helen", name: "Helen" },
+    { id: "t-mona", name: "Mona" },
+    { id: "t-tony", name: "Tony" },
+    { id: "t-coco", name: "Coco" },
+    { id: "t-jason", name: "Jason" },
+    { id: "t-vivi", name: "Vivi" },
     { id: "t-sub1", name: "Sub 1" },
     { id: "t-sub2", name: "Sub 2" },
   ],
@@ -35,6 +39,7 @@ const seedConfig = {
     { id: "s-swedish", name: "Swedish", durationMin: 60, color: "purple" },
     { id: "s-combo", name: "Combo", durationMin: 60, color: "amber" },
     { id: "s-foot", name: "Foot Massage", durationMin: 60, color: "coral" },
+    { id: "s-unknown", name: "Unknown", durationMin: 60, color: "gray" },
   ],
 };
 
@@ -124,7 +129,9 @@ const routeKeys = [
   "GET /api/day",
   "GET /api/admin/day",
   "POST /api/admin/appointments",
+  "PUT /api/admin/appointments/{date}/{id}",
   "DELETE /api/admin/appointments/{date}/{id}",
+  "PUT /api/admin/roster/{date}",
 ];
 for (const routeKey of routeKeys) {
   new aws.apigatewayv2.Route(routeKey.toLowerCase().replace(/[^a-z0-9]+/g, "-"), {
