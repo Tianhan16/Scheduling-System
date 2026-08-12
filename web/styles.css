@@ -35,7 +35,6 @@ header {
   top: 0;
   z-index: 10;
   background: var(--bg);
-  border-bottom: 1px solid var(--line);
 }
 .brand {
   position: relative;
@@ -157,6 +156,8 @@ main { overflow-x: auto; }
   font-size: 13px;
   border-left: 1px solid var(--line);
 }
+/* Names row: no dangling tick between the empty corner and the first name */
+.corner + .name { border-left: 0; }
 .tlab {
   position: absolute;
   right: 6px;
