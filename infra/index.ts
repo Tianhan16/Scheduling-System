@@ -24,6 +24,7 @@ const seedConfig = {
   therapists: [
     { id: "t-summer", name: "Summer" },
     { id: "t-cindy", name: "Cindy" },
+    { id: "t-penny", name: "Penny" },
     { id: "t-helen", name: "Helen" },
     { id: "t-mona", name: "Mona" },
     { id: "t-tony", name: "Tony" },
