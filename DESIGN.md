@@ -98,8 +98,8 @@ The day response contains **everything needed to draw the screen** in one call:
 }
 ```
 
-Admin day responses are identical except `phone` (full) replaces `phoneLast4`,
-plus `notes`.
+Admin day responses are identical except `phone` (full) replaces `phoneLast4`.
+Notes are visible to both views; only the phone number is masked for staff.
 
 Rules on `POST`:
 - `durationMin` optional — defaults from the service.

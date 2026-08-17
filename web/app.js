@@ -149,7 +149,7 @@ function apptBlock(a, services) {
   div.style.height = `${a.durationMin * PX_PER_MIN - 2}px`;
 
   // Line order: phone (bold), duration + service, then notes and/or name.
-  // Staff payloads have no notes field, so staff blocks never show notes.
+  // Both views see notes; only the phone is masked for staff.
   const phoneText = IS_ADMIN ? formatPhone(a.phone) : a.phoneLast4 && `••• ${a.phoneLast4}`;
   const lines = [
     { text: phoneText || "walk-in", cls: "l1" },

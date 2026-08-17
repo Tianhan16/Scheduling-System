@@ -72,6 +72,7 @@ async function queryDay(date) {
 
 // Shape an appointment for the response. Masking happens HERE, server-side:
 // the staff view never receives the full phone number at all (FR-4).
+// Everything else — including notes — is visible to both views.
 function view(appt, { masked }) {
   const base = {
     id: appt.id,
@@ -81,12 +82,13 @@ function view(appt, { masked }) {
     start: appt.start,
     durationMin: appt.durationMin,
     status: appt.status,
+    notes: appt.notes ?? null,
   };
   if (masked) {
     const digits = (appt.phone ?? "").replace(/\D/g, "");
     return { ...base, phoneLast4: digits ? digits.slice(-4) : null };
   }
-  return { ...base, phone: appt.phone ?? null, notes: appt.notes ?? null };
+  return { ...base, phone: appt.phone ?? null };
 }
 
 async function getDay(date, { masked }) {
