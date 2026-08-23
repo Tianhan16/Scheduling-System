@@ -40,6 +40,7 @@ const seedConfig = {
     { id: "s-swedish", name: "Swedish", durationMin: 60, color: "purple" },
     { id: "s-combo", name: "Combo", durationMin: 60, color: "amber" },
     { id: "s-foot", name: "Foot Massage", durationMin: 60, color: "coral" },
+    { id: "s-thai", name: "Thai Massage", durationMin: 60, color: "green" },
     { id: "s-unknown", name: "Unknown", durationMin: 60, color: "gray" },
   ],
 };
