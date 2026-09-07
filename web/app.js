@@ -281,7 +281,7 @@ function openRosterDialog() {
   renumberRoster();
   $("rosterHint").textContent = dayData.rosterSet
     ? "Columns for this day, left to right"
-    : "No roster saved for this day — currently showing all staff";
+    : "No roster saved for this day — showing the default five";
   $("rError").hidden = true;
   $("rosterDialog").showModal();
 }
