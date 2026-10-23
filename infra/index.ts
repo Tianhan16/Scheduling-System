@@ -22,13 +22,11 @@ const table = new aws.dynamodb.Table("appointments", {
 // durationMin is only the default prefill — admin sets real length per booking.
 const seedConfig = {
   therapists: [
-    { id: "t-summer", name: "Summer" },
     { id: "t-cindy", name: "Cindy" },
     { id: "t-penny", name: "Penny" },
-    { id: "t-emily", name: "Emily" },
-    { id: "t-mack", name: "Mack" },
-    { id: "t-mona", name: "Mona" },
     { id: "t-helen", name: "Helen" },
+    { id: "t-mona", name: "Mona" },
+    { id: "t-summer", name: "Summer" },
     { id: "t-tony", name: "Tony" },
     { id: "t-coco", name: "Coco" },
     { id: "t-jason", name: "Jason" },
@@ -43,6 +41,7 @@ const seedConfig = {
     { id: "s-combo", name: "Combo", durationMin: 60, color: "amber" },
     { id: "s-foot", name: "Foot Massage", durationMin: 60, color: "coral" },
     { id: "s-thai", name: "Thai Massage", durationMin: 60, color: "green" },
+    { id: "s-headspa", name: "Head Spa", durationMin: 60, color: "blue" },
     { id: "s-unknown", name: "Unknown", durationMin: 60, color: "gray" },
   ],
 };

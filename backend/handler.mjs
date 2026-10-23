@@ -98,18 +98,21 @@ async function getDay(date, { masked }) {
   // never sent to any client — they simply vanish from the grid.
   const booked = items.filter(isBooked);
 
-  // Columns for the day: the saved roster, else the first six therapists
+  // Columns for the day: the saved roster, else the first four therapists
   // from the config as a sensible default. Anyone with a booking that day
   // always gets a column even if left off the roster — an appointment must
   // never be invisible.
   const byId = new Map(config.therapists.map((t) => [t.id, t]));
   const therapists = roster?.therapistIds?.length
     ? roster.therapistIds.map((id) => byId.get(id)).filter(Boolean)
-    : config.therapists.slice(0, 6);
+    : config.therapists.slice(0, 4);
   const present = new Set(therapists.map((t) => t.id));
   for (const a of booked) {
     if (!present.has(a.therapistId)) {
-      therapists.push(byId.get(a.therapistId) ?? { id: a.therapistId, name: a.therapistId });
+      // Therapists later removed from the config (e.g. former staff) still
+      // get a readable column name on their historical days.
+      const fallbackName = a.therapistId.replace(/^t-/, "").replace(/^\w/, (c) => c.toUpperCase());
+      therapists.push(byId.get(a.therapistId) ?? { id: a.therapistId, name: fallbackName });
       present.add(a.therapistId);
     }
   }

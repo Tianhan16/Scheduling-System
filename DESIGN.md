@@ -146,7 +146,7 @@ single query.
 | Config | `CONFIG` | `current` | therapists[], services[] |
 
 Day responses resolve columns from the roster item (it rides along in the same
-partition query). No roster saved → the first six therapists in the config
+partition query). No roster saved → the first four therapists in the config
 show as the default. A therapist with a booking that day always gets a column,
 even if left off the roster.
 
