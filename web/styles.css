@@ -51,6 +51,25 @@ header {
   margin-left: 7px;
   color: var(--accent);
 }
+
+/* Holiday dressing — app.js adds .festive to <body> from Nov 1 through
+   New Year's Day; outside the season these never render. */
+.holly { display: none; vertical-align: -3px; margin-left: 7px; }
+.lights { display: none; }
+body.festive .holly { display: inline-block; }
+body.festive .lights {
+  display: block;
+  height: 10px;
+  background-image:
+    linear-gradient(var(--line-strong), var(--line-strong)),
+    radial-gradient(circle at 10px 5px, #d64545 2.8px, transparent 3.4px),
+    radial-gradient(circle at 30px 7px, #e5a93d 2.8px, transparent 3.4px),
+    radial-gradient(circle at 50px 5px, #4da576 2.8px, transparent 3.4px),
+    radial-gradient(circle at 70px 7px, #5b8fd4 2.8px, transparent 3.4px);
+  background-size: 100% 1px, 80px 10px, 80px 10px, 80px 10px, 80px 10px;
+  background-position: 0 2px, 0 0, 0 0, 0 0, 0 0;
+  background-repeat: no-repeat, repeat-x, repeat-x, repeat-x, repeat-x;
+}
 .nav-row {
   display: flex;
   align-items: center;

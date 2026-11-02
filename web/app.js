@@ -412,5 +412,13 @@ document.addEventListener("visibilitychange", () => {
   if (!document.hidden) refresh();
 });
 
+// Holiday dressing: November through New Year's Day, every year.
+{
+  const now = new Date();
+  if (now.getMonth() >= 10 || (now.getMonth() === 0 && now.getDate() === 1)) {
+    document.body.classList.add("festive");
+  }
+}
+
 refresh();
 setInterval(refresh, POLL_MS);
