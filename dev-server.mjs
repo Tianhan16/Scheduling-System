@@ -1,12 +1,26 @@
-// Local dev server: serves web/ and proxies /api/* to the deployed CloudFront,
+// Local dev server: serves web/ and proxies /api/* to the deployed site,
 // mimicking production routing. Run `node dev-server.mjs`, open localhost:4173.
+//
+// The live URL is deliberately not in this repo. Put it in a `.api-url` file
+// next to this script (ignored by git), or set the SCHEDULE_API env var.
 import http from "node:http";
+import { readFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const WEB = path.join(path.dirname(fileURLToPath(import.meta.url)), "web");
-const API = "https://private-url-removed.example";
+const ROOT = path.dirname(fileURLToPath(import.meta.url));
+const WEB = path.join(ROOT, "web");
+
+let API = process.env.SCHEDULE_API;
+if (!API) {
+  try {
+    API = readFileSync(path.join(ROOT, ".api-url"), "utf8").trim();
+  } catch {
+    console.error("No API URL set. Create a .api-url file containing your deployed URL, or set SCHEDULE_API.");
+    process.exit(1);
+  }
+}
 const TYPES = {
   ".html": "text/html",
   ".css": "text/css",

@@ -177,7 +177,8 @@ menu actually changes.
 
 ## Deployed (2026-08-10)
 
-- Staff: https://private-url-removed.example
-- Admin: https://private-url-removed.example/admin.html
+- Live on AWS and in daily use at the store since August 2026. The URL is
+  deliberately kept out of this repo (`dev-server.mjs` reads it from a local
+  `.api-url` file that git ignores).
 - Static files are served uncached (instant deploys); only `/api/*` was ever
   dynamic. Local frontend dev: `node dev-server.mjs` → localhost:4173.
